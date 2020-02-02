@@ -4,9 +4,9 @@
 
 - name: "Debug - ansible playbook variable values"
   debug: msg="{{ vars }}"
-  when: ansible-role-common_debug
+  when: ansible_role_common_debug
 
 
 - name: "Debug value of playbook vars"
   debug: msg="{{ vars | to_yaml }}"
-  when: ansible-role-common_debug
+  when: ansible_role_common_debug

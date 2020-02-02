@@ -1,7 +1,7 @@
 ---
-# Ansible Role: ansible-role-common
+# Ansible Role: ansible_role_common
 
 - hosts: localhost
   become: true
   roles:
-    - ansible-role-ansible-role-common
+    - ansible-role-ansible_role_common

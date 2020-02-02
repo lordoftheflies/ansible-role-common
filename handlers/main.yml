@@ -1,1 +1,28 @@
 ---
+- name: "Fully-qualified Hostname configuration succeed"
+  listen: "fqhn_config succeed"
+  register: hostname_fine
+  debug: msg="Fq-hostname configuration succeed."
+
+- name: "Fully-qualified Hostname configuration failed"
+  listen: "fqhn_config failed"
+  debug: msg="Fq-hostname configuration failed."
+
+- name: "Locale configuration succeed"
+  listen: "locale_config succeed"
+  register: locale_fine
+  debug: msg="Locale configuration succeed."
+
+- name: "Locale configuration failed"
+  listen: "locale_config failed"
+  debug: msg="Locale configuration failed."
+
+- name: "OS upgrade succeed"
+  listen: "os_upgrade succeed"
+  register: uptodate_fine
+  reboot:
+    reboot_timeout: 3600
+
+- name: "OS upgrade failed"
+  listen: "os_upgrade failed"
+  debug: msg="OS upgrade failed."

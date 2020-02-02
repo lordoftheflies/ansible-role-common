@@ -25,13 +25,13 @@
         - "{{ fact_role_path }}/defaults/{{ ansible_distribution | lower }}.yml"
       skip: true
 
-- name: "DEBUG - Debug ansible-role-common variable values"
+- name: "DEBUG - Debug ansible_role_common variable values"
   include: "{{ item }}"
   with_first_found:
     - files:
         - "{{ fact_role_path }}/tasks/debug.yml"
       skip: true
-  when: ansible-role-common_debug is defined and ansible-role-common_debug
+  when: ansible_role_common_debug is defined and ansible_role_common_debug
 
 # END - boilerplate tasks
 
@@ -41,15 +41,15 @@
 
 - name: "DEBUG - value of ansible_distribution"
   debug: var=ansible_distribution
-  when: ansible-role-common_debug
+  when: ansible_role_common_debug
 
 - name: "DEBUG - value of ansible_distribution_version"
   debug: var=ansible_distribution_version
-  when: ansible-role-common_debug
+  when: ansible_role_common_debug
 
 - name: "DEBUG - value of ansible_distribution_major_version"
   debug: var=ansible_distribution_major_version
-  when: ansible-role-common_debug
+  when: ansible_role_common_debug
 
 ## CentOS
 
@@ -93,3 +93,92 @@
       state: present
     - name: libssl-dev
       state: present
+
+
+
+- name: "Setup hostname to {{ ansible_hostname }}"
+  tags: [ "hostname", "fqdn" ]
+  become: yes
+  vars:
+    actual_hostname: "{{ lookup('file', '/etc/hostname') }}"
+    actual_hosts: "{{ lookup('file', '/etc/hosts') }}"
+    fully_qualified_hostname: "{{ subdomain }}.{{ domain }}"
+  block:
+    - include: setup-hostname.yml
+    - debug:
+        msg: "Fully-qualified Hostname[{{ ansible_hostname }}] = {{ fully_qualified_hostname }}"
+      notify: fqhn_config succeed
+#      meta: flush_handlers
+  rescue:
+    - debug:
+        msg: "Fully-qualified-domain-name set failed."
+      notify: fqhn_config failed
+  always:
+    - debug: msg="Fully-qualified Hostname[{{ ansible_hostname }}] = {{ fully_qualified_hostname }}"
+    - debug: msg="Hostname[{{ ansible_hostname }}] = {{ actual_hostname }}"
+    - debug: msg="Hosts[{{ ansible_hostname }}] = {{ actual_hosts }}"
+
+- name: "Support locales"
+  tags: [ "i18n", "l10n" ]
+  become: yes
+  vars:
+    system_locale: "{{ locale }}.{{ charset }}"
+    system_language: "{{ language }}.{{ charset }}"
+  block:
+    - include: setup-locales.yml
+      notify: locale_config succeed
+#      meta: flush_handlers
+  rescue:
+    - debug: msg="Localization setup failed."
+      notify: locale_config failed
+  always:
+    - debug: msg="System-Locale[{{ ansible_hostname }}] = {{ system_locale }}"
+    - debug: msg="System-Language[{{ ansible_hostname }}]= {{ system_language }}"
+
+- name: "Update and remove useless packages from the cache and unnecesary from file-system."
+  become: yes
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "eon" and ansible_distribution_version != "19.10"
+  block:
+    - when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+        autoclean: yes
+        autoremove: yes
+      tags: [ "ubuntu", "debian" ]
+
+    - when: ansible_distribution == 'Ubuntu'
+      template:
+        src: release-upgrades.j2
+        dest: /etc/update-manager/release-upgrades
+
+    - when: ansible_distribution == 'Ubuntu'
+      command: do-release-upgrade -f DistUpgradeViewNonInteractive
+      tags: [ "ubuntu" ]
+      notify: os_upgrade succeed
+
+    - when: ansible_distribution == 'CentOS' or ansible_distribution == 'Fedora'
+      yum:
+        update_cache: yes
+        autoremove: yes
+      tags: [ "centos", "fedora" ]
+      notify: os_upgrade succeed
+#    - meta: flush_handlers
+  rescue:
+    - debug: msg="Updates failed."
+      notify: os_upgrade failed
+  always:
+    - debug: msg="Distribution[{{ ansible_hostname }}] = {{ ansible_distribution }}"
+    - debug: msg="Release[{{ ansible_hostname }}] = {{ ansible_distribution_release }}"
+    - debug: msg="Version[{{ ansible_hostname }}] = {{ ansible_distribution_version }}"
+    - debug: msg="OS-family[{{ ansible_hostname }}] = {{ ansible_os_family }}"
+#
+#    - name: "Wait for server to reboot."
+#      wait_for:
+#        host: "{{ ansible_ssh_host }}"
+#        port: 22
+#        state: started
+#        connection: local
+#        become: no
+#
+

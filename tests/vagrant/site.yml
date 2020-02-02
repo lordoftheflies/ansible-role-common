@@ -1,5 +1,5 @@
 ---
-# Ansible Role: ansible-role-common
+# Ansible Role: ansible_role_common
 
 
 
@@ -43,7 +43,7 @@
 
 #  vars:
 
-#    - ansible-role-common_debug : true
+#    - ansible_role_common_debug : true
 
     - deployment_user: true # for DEBUGGING set to false to skip deployment_user role
   roles: 
@@ -67,7 +67,7 @@
   vars:
 
 
-    - ansible-role-common_debug : true
+    - ansible_role_common_debug : true
 
     - upgrade: true  # set to true to run upgrade role
     - epel: true      # set to true to run epel role
