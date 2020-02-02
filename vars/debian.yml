@@ -1,0 +1,5 @@
+---
+# ansible-role-ansible-role-common/vars/debian.yml
+
+# Debian specific vars
+ansible-role-common_package_extension: 'deb'

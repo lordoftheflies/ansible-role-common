@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    - ansible-role-common_deployment_users_home: /home/vagrant
+    - ansible-role-common_testing_provider: vagrant
+  roles:
+    - ansible-role-common
