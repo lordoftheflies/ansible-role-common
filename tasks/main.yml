@@ -75,16 +75,18 @@
 
 - name: "Run Ubuntu  specific tasks"
   include_tasks: "ubuntu_{{ item }}.yml"
+  become: yes
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == ""
   with_items:
-      - 12.04
-      - 14.04
-      - 16.04
-      - 17.04
-      - 18.04
-      - 19.04
+    - 12.04
+    - 14.04
+    - 16.04
+    - 17.04
+    - 18.04
+    - 19.04
 
 - name: "Install necessary packages"
+  become: yes
   package:
     - name: python-pip
       state: present
@@ -105,7 +107,7 @@
     - debug:
         msg: "Fully-qualified Hostname[{{ ansible_hostname }}] = {{ fully_qualified_hostname }}"
       notify: fqhn_config succeed
-#      meta: flush_handlers
+  #      meta: flush_handlers
   rescue:
     - debug:
         msg: "Fully-qualified-domain-name set failed."
@@ -124,7 +126,7 @@
   block:
     - include: setup-locales.yml
       notify: locale_config succeed
-#      meta: flush_handlers
+  #      meta: flush_handlers
   rescue:
     - debug: msg="Localization setup failed."
       notify: locale_config failed
@@ -160,7 +162,7 @@
         autoremove: yes
       tags: [ "centos", "fedora" ]
       notify: os_upgrade succeed
-#    - meta: flush_handlers
+  #    - meta: flush_handlers
   rescue:
     - debug: msg="Updates failed."
       notify: os_upgrade failed
