@@ -4,7 +4,7 @@
 
 # START - boilerplate tasks
 
-- name: Load OS specific variables
+- name: "Load OS specific variables ({{ ansible_os_family }}) ..."
   include_vars: "{{ item }}"
   with_first_found:
     - files:
