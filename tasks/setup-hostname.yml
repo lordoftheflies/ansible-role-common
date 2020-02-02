@@ -17,7 +17,6 @@
     state: present
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.all }}"
-  validate: 'cat %s'
   tags:
     - cherubits
     - common
