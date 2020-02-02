@@ -87,12 +87,11 @@
 - name: "Install necessary packages"
   become: yes
   package:
-    - name: python-pip
-      state: present
-    - name: libssl-dev
-      state: present
-
-
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-pip
+    - libssl-dev
 
 - name: "Setup hostname to {{ ansible_hostname }}"
   tags: [ "hostname", "fqdn" ]
