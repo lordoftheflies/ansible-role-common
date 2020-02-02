@@ -4,4 +4,4 @@
 - hosts: localhost
   become: true
   roles:
-    - ansible-role-ansible_role_common
+    - ansible_role_common
