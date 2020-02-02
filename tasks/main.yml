@@ -75,7 +75,6 @@
 
 - name: "Run Ubuntu  specific tasks"
   include_tasks: "ubuntu_{{ item }}.yml"
-  become: yes
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == ""
   with_items:
     - 12.04
