@@ -1,2 +1,9 @@
 ---
 # ansible-role-ansible_role_common/vars/main.yml
+locales:
+  - en_US.UTF-8
+  - hu_HU.UTF-8
+charset: UTF-8
+language: en_US
+locale: en_GB
+domain: cherubits.hu
