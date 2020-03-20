@@ -2,6 +2,7 @@
 
 galaxy_info:
   author: 'László Hegedűs'
+  role_name: common_role
   description: 'Ansible Galaxy role for ansible_role_common.'
   company: 'Cherubits'
   license: Apache-2.0
